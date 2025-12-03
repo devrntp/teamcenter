@@ -1,0 +1,45 @@
+Item Structure Overview
+Item Master
+    Item Revision - 변경 Revision마다 바뀌는 속성 (신버전 공유 필요 시 실행)
+        Item Version - 자동 업데이트(Checkin-Checkout)
+
+
+폴더 - Collection Relationship
+BOM - Used Relationship
+
+파일 = Dataset
+
+Configuration Installation
+Teamcenter Environment Manager → Deployment Center(DC)
+
+DC - Install / Patch / Upgrade
+Web App - Deploy까지 담당, 보안(Vault Service) 기능 탑재
+
+Database - sysdba infodba/infodba@tc
+
+BMIDE(Data Model)
+Persist Object Manager / Runtime Business Object
+
+Workflow - Process Template에서 Task 생성 및 분기 기능(예외 프로세스)
+통지 Task, 릴리즈로 변경 Task도 별도
+Action Handler를 통해 추가 실행(BMIDE) ex. ERP Interface 등
+minimum participant를 통해 일부만 수행해도 되도록 가능
+승인 시 Release Status 추가
+
+Audit Manager - Audit Log 활용 가능 - BMIDE를 통해 남길 Log 추가 가능
+
+팀센터 보안체계
+인증 - 권한 - 감사 - 자산보호
+
+Teamcenter Security Service(별도 모듈) - LDAP, SSO, 결합 등
+Access Manager(Rule-Based) / Non-Rule Tree
+Audit Manager 및 로그 관리
+자산보호 - 방화벽, Reverse Proxy 등
+
+Access Control List - 개별객체 기반 or 룰 기반(객체 전사적 적용)
+그룹, 프로젝트, Workflow 룰 적용 → 회사 팀센터 규칙 제정 가능
+Authorized Data Access - 한정 티켓(국내에선 사용↓)
+
+ACL - 매번 백업 후 신중히 수행할 것(잘못될 경우 시스템 전체가 문제생길 수 있음)
+
+그룹권한(부서) - 프로젝트(특정 프로젝트) - Status(릴리즈) - Workflow(ACL) 순으로 강력

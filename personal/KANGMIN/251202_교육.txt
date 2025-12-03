@@ -1,0 +1,66 @@
+Teamcenter 4-Tier Architecture 특징
+클라이언트 RAG - FrontEnd AI 도입 (+MCP)
+웹 Backend - Node.js / 클라이언트 FrontEnd - React(직접 사용X), Javascript, Declarative UI 활용
+엔터프라이즈 ITK, SOA - Java 퇴출
+리소스 DB, OS는 ENOVIA와 같은 것
+리소스 React 하드코딩 금지
+
+커리어 패스
+1. SD - Sever Client 개발
+2. SA - (솔루션) 프로세스, 데이터 모델링, BMIDE / (시스템) 사이징, 퍼포먼스, 데이터 모델 요소 등
+
+OOTB(사용자) / Configuration(관리자) / Customization(개발자) - 3가지 경우를 잘 구분할 필요가 있음
+
+리소스킷
+1. Xcelerator Academy(유료) - 1인 $1,000(고객) / 1회사 $1,000(파트너)
+2. Support Center - 메인버전(2512) / 마이너 업데이트(.0001) 다운로드 가능, Knowledge Base(AI 연계 기능), 커뮤니티(문의사항)
+상용 AI를 활용해서 문제해결(커뮤니티와 매뉴얼 자료 기반) 및 코딩이 가능
+3. HighSpot - 제품 소개 자료
+4. Solution Trials - Demo 실습(클라우드 활용)
+
+System Architecture
+1. 2-Tier - Client / Resource(Volume, Database)
+파일 캐시(소켓), 데이터(CIFS, NFS), 데이터베이스(SQL)
+부하 → 먹통
+WAN 환경부터 레이턴시 문제 발생
+레거시화
+
+2. 4-Tier - Client(웹 프로토콜 활용) / Web(게이트웨이) / Enterprise(Business Logic) / Resource(Volume, Database)
+부하 분산
+Web + Enterprise 결합 가능(3-Tier)
+File Client Cache → File Server Cache → Volume 원본 순으로 추적(Cache는 암호화)
+Dispatcher - 클라이언트, 스케줄러, 모듈, 트랜스레이터
+
+3. AW FrontEnd / BackEnd
+FrontEnd - HTML5, CSS, JavaScript / React → Declarative UI(Siemens Web Framework)
+BackEnd - Node.js, Microservice
+Node Js(3000) / War(8080) / Microservice(Eureka) / Dispatcher(9080)
+
+Declarative UI
+HTML / JSON / JS → 화면 구성
+button, checkbox, textarea, list, searchbox, list-filter, type-selector 등등
+Solr 검색엔진(Active Workspace Indexing Service)
+
+License Architecture
+Type - Name(유저별) / Concurrent(CAD) / Server(SDK 1개당) / Per Product
+Author - 생성 가능, 대부분 국내 사용자에게 제공하기 위해 구매
+Consumer - 결재/조회만 가능, 큰 의미가 없는 상황
+
+NX CAD 5 / Author 17 + Consumer 3 = Total 20
+Application - Author 갯수 이하
+Siemens Advanced Licensing Technology(SALT, LmTools)를 라이센스 서버로 활용
+
+화면 구성
+Main(system) / Favorite(group) / Search
+
+Global Navigation (왼쪽)
+Global Search (상단)
+Profile (개인설정)
+
+Pin 기능을 통해 검색쿼리, 항목 바로가기 홈 화면 고정 가능
+
+SMW → Requirement, Functional, Logical, Physical 모델링 수행
+
+BOM 구성
+사양 BOM → CADBOM(Design) → EBOM(+부자재) → MBOM
+프로그램 → 프로젝트 → 게이트, Task → 체크리스트, 대시보드, 오픈이슈
