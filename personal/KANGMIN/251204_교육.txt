@@ -1,0 +1,34 @@
+Customization 개요
+SOA API → 서버 접근
+ITK API → 코어(Command Line)
+BMIDE → 코어 접근 후 수정
+
+ITK
+Data Model Based Customization, Workflow, 새로운 SOA 서비스 개발, Operation/Extension 수행
+C, C++ - 서버 On/Off로 반드시 반영해야 함(C#으로 변경해서 해소할 생각)
+
+Visual Studio 활용하여 ITK API 조회, 수정, 컴파일 등등 수행
+자세한 개발 교육은 추가 교육 수강 필요(12월 서울 / 3월 부산)
+
+SOA(Teamcenter Services)
+Java, C++, C#이 모두 가능
+SOA_Client 폴더에 Documentation 제공(Eclipse 활용)
+RestAPI - Mendix 활용, 종국에는 SOA를 호출
+
+BMIDE Codeful
+Code Generation - Data Model Based Customization (상속 필요)
+Workflow - Handler 통해 Design(Task Handler)
+
+Scripted Business Logic(C#)
+정지 없이 반영할 수 있도록 신규 기능
+C# Handler → NuGet 서버(리눅스는 컨테이너로) 활용 → C#으로 모든 기능을 대체할 생각
+
+Client Customization
+Siemens Web Framework(SEF)를 활용한 Declarative UI 개발
+UI Pattern Book 참고하여 Widget 개발 가능
+
+개발환경 소스
+OOTB(불변) + src(수정) = out(전체 구성 소스)
+빌드, 퍼블리시 후 서버 File Repository 반영
+Active Architect - Command Builder / Panel Builder / Action Builder
+→ 패널, 버튼 등 만들 수 있으나 아직 개발 시 상용화X
