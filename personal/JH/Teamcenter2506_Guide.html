@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Siemens Teamcenter 2506 폴더 구조 가이드</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: #fff; }
+        
+        .slide {
+            min-height: 100vh;
+            padding: 60px 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 2px solid #00d4ff;
+            page-break-after: always;
+        }
+        
+        h1 { font-size: 3.5em; color: #00d4ff; margin-bottom: 30px; text-shadow: 0 0 30px rgba(0,212,255,0.3); }
+        h2 { font-size: 2.5em; color: #00d4ff; margin-bottom: 25px; border-left: 5px solid #00d4ff; padding-left: 20px; }
+        h3 { font-size: 1.8em; color: #00ff88; margin: 20px 0 15px; }
+        
+        .subtitle { font-size: 1.5em; color: #aaa; margin-bottom: 40px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 30px; margin-top: 30px; }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(0,212,255,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 40px rgba(0,212,255,0.2); }
+        
+        .card-title { font-size: 1.4em; color: #00d4ff; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .card-title::before { content: "📁"; }
+        
+        ul { padding-left: 25px; line-height: 1.8; }
+        li { margin: 8px 0; }
+        
+        .highlight { color: #00ff88; font-weight: bold; }
+        .warning { color: #ff6b6b; }
+        .info { color: #ffd93d; }
+        
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 15px; text-align: left; border: 1px solid rgba(0,212,255,0.3); }
+        th { background: rgba(0,212,255,0.2); color: #00d4ff; }
+        tr:nth-child(even) { background: rgba(255,255,255,0.03); }
+        
+        .logo { font-size: 1.2em; color: #00d4ff; text-align: right; margin-bottom: 20px; }
+        
+        .tree { font-family: 'Consolas', monospace; background: rgba(0,0,0,0.3); padding: 30px; border-radius: 10px; font-size: 0.95em; overflow-x: auto; }
+        .tree-item { padding: 3px 0; }
+        .tree-folder { color: #00d4ff; }
+        .tree-count { color: #888; font-size: 0.85em; }
+        
+        .badge { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.85em; margin: 3px; }
+        .badge-backup { background: #ff6b6b; }
+        .badge-delete { background: #4ecdc4; }
+        .badge-custom { background: #a29bfe; }
+        .badge-core { background: #fd79a8; }
+        
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        
+        @media print {
+            .slide { min-height: auto; page-break-after: always; padding: 40px; }
+            body { background: white; color: black; }
+            h1, h2, h3, .card-title, .highlight { color: #0066cc; }
+            .card { border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<div class="slide">
+    <div class="logo">SIEMENS</div>
+    <h1>🏭 Teamcenter 2506</h1>
+    <h1 style="font-size: 2.5em; color: #00ff88;">폴더 구조 및 관리 가이드</h1>
+    <p class="subtitle">설치 폴더 분석, 역할, 커스터마이징, 백업 가이드</p>
+    <div style="margin-top: 60px; color: #888;">
+        <p>📅 분석일: 2025년 12월</p>
+        <p>📍 경로: C:\Siemens</p>
+    </div>
+</div>
+
+<!-- Slide 2: Overview -->
+<div class="slide">
+    <h2>📊 전체 폴더 구조 개요</h2>
+    <div class="tree">
+        <div class="tree-item"><span class="tree-folder">📂 C:\Siemens\</span></div>
+        <div class="tree-item">├── 📂 <span class="tree-folder">Teamcenter2506</span> <span class="tree-count">(273,135 files) - 📌 핵심 TC 시스템</span></div>
+        <div class="tree-item">├── 📂 <span class="tree-folder">DeploymentCenter</span> <span class="tree-count">(79,544 files) - 배포 관리 도구</span></div>
+        <div class="tree-item">├── 📂 <span class="tree-folder">NX2506</span> <span class="tree-count">(105,252 files) - NX CAD 통합</span></div>
+        <div class="tree-item">├── 📂 <span class="tree-folder">Designcenter2506</span> <span class="tree-count">(7,683 files) - 설계센터</span></div>
+        <div class="tree-item">├── 📂 <span class="tree-folder">apache-tomcat-9.0.98</span> <span class="tree-count">(770 files) - 웹 서버</span></div>
+        <div class="tree-item">├── 📂 <span class="tree-folder">License Server</span> <span class="tree-count">(43 files) - 라이선스 관리</span></div>
+        <div class="tree-item">└── 📂 <span class="tree-folder">Installation_file</span> <span class="tree-count">- 설치 파일</span></div>
+    </div>
+</div>
+
+<!-- Slide 3: Teamcenter2506 Main Structure -->
+<div class="slide">
+    <h2>🔧 Teamcenter2506 핵심 구조</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-title">teamcenter_root (116,722 files)</div>
+            <p>TC 서버 실행 환경의 핵심 폴더</p>
+            <ul>
+                <li><span class="highlight">bin/</span> - 실행 파일 및 유틸리티 (1,500+)</li>
+                <li><span class="highlight">lib/</span> - 라이브러리 파일 (DLL)</li>
+                <li><span class="highlight">portal/</span> - Rich Client (RAC) 설치</li>
+                <li><span class="highlight">bmide/</span> - Business Modeler IDE</li>
+                <li><span class="highlight">aws2/</span> - Active Workspace 2</li>
+                <li><span class="highlight">include/, include_cpp/</span> - 개발 헤더</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title">tc_data (150,380 files)</div>
+            <p>설정, 데이터, 템플릿 파일</p>
+            <ul>
+                <li><span class="highlight">tc_preferences.xml</span> - 환경 설정</li>
+                <li><span class="highlight">clientcache/</span> - 클라이언트 캐시</li>
+                <li><span class="highlight">model/</span> - 데이터 모델 정의</li>
+                <li><span class="highlight">*.xsd, *.xml</span> - 스키마/템플릿</li>
+                <li><span class="highlight">logger.properties</span> - 로깅 설정</li>
+                <li>NX CAM 템플릿 (.prt 파일들)</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title">volumes (5,518 files)</div>
+            <p>파일 저장소 (Vault)</p>
+            <ul>
+                <li><span class="highlight">DefaultVolume/</span> - 실제 파일 저장소</li>
+                <li>CAD 파일, 문서 등 저장</li>
+                <li><span class="warning">⚠️ 반드시 백업 필요</span></li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title">Dispatcher (515 files)</div>
+            <p>배치/백그라운드 작업 처리</p>
+            <ul>
+                <li>DispatcherClient/ - 클라이언트</li>
+                <li>Scheduler/ - 스케줄러</li>
+                <li>Module/ - 변환 모듈</li>
+                <li>번역, 변환 작업 처리</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 4: teamcenter_root Details -->
+<div class="slide">
+    <h2>📂 teamcenter_root 상세 구조</h2>
+    <table>
+        <tr>
+            <th>폴더명</th>
+            <th>파일수</th>
+            <th>역할</th>
+            <th>중요도</th>
+        </tr>
+        <tr>
+            <td><strong>bin/</strong></td>
+            <td>1,671</td>
+            <td>실행파일, 유틸리티, DLL 라이브러리</td>
+            <td><span class="badge badge-core">핵심</span></td>
+        </tr>
+        <tr>
+            <td><strong>aws2/</strong></td>
+            <td>26,207</td>
+            <td>Active Workspace 2 웹 클라이언트</td>
+            <td><span class="badge badge-core">핵심</span></td>
+        </tr>
+        <tr>
+            <td><strong>portal/</strong></td>
+            <td>3,712</td>
+            <td>Rich Application Client (RAC)</td>
+            <td><span class="badge badge-core">핵심</span></td>
+        </tr>
+        <tr>
+            <td><strong>bmide/</strong></td>
+            <td>3,205</td>
+            <td>Business Modeler IDE - 데이터모델 커스터마이징</td>
+            <td><span class="badge badge-custom">커스터마이징</span></td>
+        </tr>
+        <tr>
+            <td><strong>include/, include_cpp/</strong></td>
+            <td>6,962</td>
+            <td>C/C++ 개발 헤더 파일</td>
+            <td><span class="badge badge-custom">커스터마이징</span></td>
+        </tr>
+        <tr>
+            <td><strong>install/</strong></td>
+            <td>11,128</td>
+            <td>설치/업그레이드 스크립트</td>
+            <td><span class="badge badge-core">핵심</span></td>
+        </tr>
+        <tr>
+            <td><strong>logs/</strong></td>
+            <td>1,676</td>
+            <td>서버 로그 파일</td>
+            <td><span class="badge badge-delete">정리가능</span></td>
+        </tr>
+        <tr>
+            <td><strong>microservices/</strong></td>
+            <td>18,711</td>
+            <td>마이크로서비스 컴포넌트</td>
+            <td><span class="badge badge-core">핵심</span></td>
+        </tr>
+        <tr>
+            <td><strong>solr-9.6.0/</strong></td>
+            <td>2,313</td>
+            <td>전문 검색 엔진 (Full Text Search)</td>
+            <td><span class="badge badge-core">핵심</span></td>
+        </tr>
+    </table>
+</div>
+
+<!-- Slide 5: Development/Customization -->
+<div class="slide">
+    <h2>🛠️ 커스터마이징 필수 경로</h2>
+    <div class="two-col">
+        <div>
+            <h3>데이터 모델 커스터마이징</h3>
+            <div class="card">
+                <ul>
+                    <li><span class="highlight">teamcenter_root\bmide\</span>
+                        <ul>
+                            <li>templates/ - 템플릿 프로젝트</li>
+                            <li>workspace/ - BMIDE 작업공간</li>
+                            <li>client/ - BMIDE 클라이언트</li>
+                        </ul>
+                    </li>
+                    <li>프로퍼티, 타입, 룰 정의</li>
+                    <li>LOV, 객체 관계 설정</li>
+                    <li>워크플로우 템플릿 생성</li>
+                </ul>
+            </div>
+            
+            <h3>서버 확장 개발</h3>
+            <div class="card">
+                <ul>
+                    <li><span class="highlight">teamcenter_root\include\</span> - C API 헤더</li>
+                    <li><span class="highlight">teamcenter_root\include_cpp\</span> - C++ 헤더</li>
+                    <li><span class="highlight">teamcenter_root\lib\</span> - 링크 라이브러리</li>
+                    <li>User Exits, Custom Handlers</li>
+                    <li>ITK 프로그래밍</li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <h3>클라이언트 커스터마이징</h3>
+            <div class="card">
+                <ul>
+                    <li><span class="highlight">teamcenter_root\portal\</span>
+                        <ul>
+                            <li>plugins/ - RAC 플러그인</li>
+                            <li>registry/ - UI 설정</li>
+                        </ul>
+                    </li>
+                    <li><span class="highlight">teamcenter_root\aws2\</span> - AWC 커스터마이징</li>
+                    <li>XML 스타일시트 커스텀</li>
+                </ul>
+            </div>
+            
+            <h3>환경 설정</h3>
+            <div class="card">
+                <ul>
+                    <li><span class="highlight">tc_data\tc_preferences.xml</span></li>
+                    <li><span class="highlight">tc_data\tc_profilevars.bat</span></li>
+                    <li><span class="highlight">tc_data\tc_setup.bat</span></li>
+                    <li><span class="highlight">tc_data\logger.properties</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 6: Key Source Files -->
+<div class="slide">
+    <h2>📝 주요 개발 소스/설정 파일</h2>
+    <table>
+        <tr>
+            <th>파일/폴더</th>
+            <th>위치</th>
+            <th>용도</th>
+        </tr>
+        <tr>
+            <td><strong>tc_preferences.xml</strong></td>
+            <td>tc_data\</td>
+            <td>시스템 전체 환경설정 (Preferences)</td>
+        </tr>
+        <tr>
+            <td><strong>tc_profilevars.bat</strong></td>
+            <td>tc_data\</td>
+            <td>환경변수 설정 스크립트</td>
+        </tr>
+        <tr>
+            <td><strong>process_templates_base.dat</strong></td>
+            <td>tc_data\</td>
+            <td>워크플로우 템플릿 정의</td>
+        </tr>
+        <tr>
+            <td><strong>datamapping.xml</strong></td>
+            <td>tc_data\</td>
+            <td>CAD 데이터 매핑 규칙</td>
+        </tr>
+        <tr>
+            <td><strong>defaultTcxmlScopeRules.xml</strong></td>
+            <td>tc_data\</td>
+            <td>TCXML 내보내기 범위 규칙</td>
+        </tr>
+        <tr>
+            <td><strong>tc_am_rule_tree.xml</strong></td>
+            <td>tc_data\</td>
+            <td>접근관리(AM) 룰 트리</td>
+        </tr>
+        <tr>
+            <td><strong>bmide\templates\</strong></td>
+            <td>teamcenter_root\</td>
+            <td>BMIDE 데이터모델 템플릿</td>
+        </tr>
+        <tr>
+            <td><strong>nxmanager_exports.dat</strong></td>
+            <td>tc_data\</td>
+            <td>NX 통합 내보내기 설정</td>
+        </tr>
+        <tr>
+            <td><strong>model\</strong></td>
+            <td>tc_data\</td>
+            <td>데이터 모델 정의 파일 (1,062개)</td>
+        </tr>
+    </table>
+</div>
+
+<!-- Slide 7: Deletable Files -->
+<div class="slide">
+    <h2>🗑️ 삭제 가능한 파일/폴더</h2>
+    <div class="grid">
+        <div class="card">
+            <h3 style="color: #4ecdc4;">✅ 안전하게 삭제 가능</h3>
+            <ul>
+                <li><strong>teamcenter_root\logs\</strong> - 오래된 로그 파일</li>
+                <li><strong>tc_data\log_*\</strong> - 데이터 로그</li>
+                <li><strong>apache-tomcat\logs\</strong> - Tomcat 로그</li>
+                <li><strong>Dispatcher\Logs\</strong> - 디스패처 로그</li>
+                <li><strong>teamcenter_root\temp\</strong> - 임시 파일</li>
+                <li><strong>apache-tomcat\temp\</strong> - Tomcat 임시</li>
+                <li><strong>apache-tomcat\work\</strong> - 컴파일 캐시</li>
+                <li><strong>*.log, *_importer.log</strong> - 로그 파일들</li>
+                <li><strong>*_validation.out</strong> - 검증 출력 파일</li>
+                <li><strong>*_failed_objects.xml</strong> - 실패 로그</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3 style="color: #ff6b6b;">⚠️ 주의해서 삭제</h3>
+            <ul>
+                <li><strong>tc_data\clientcache\</strong>
+                    <ul>
+                        <li>145,460 파일 - 재생성 가능</li>
+                        <li>삭제 시 재생성 필요</li>
+                    </ul>
+                </li>
+                <li><strong>DeploymentCenter\repository\software\</strong>
+                    <ul>
+                        <li>설치 후 불필요 시 삭제 검토</li>
+                        <li>업그레이드 시 필요할 수 있음</li>
+                    </ul>
+                </li>
+                <li><strong>Designcenter2506\*.zip</strong>
+                    <ul>
+                        <li>설치 완료 후 검토</li>
+                    </ul>
+                </li>
+            </ul>
+            <h3 style="color: #ff6b6b; margin-top: 20px;">🚫 절대 삭제 금지</h3>
+            <ul>
+                <li>volumes\DefaultVolume\ - 실제 데이터!</li>
+                <li>tc_data\pom_schema_* - DB 스키마</li>
+                <li>teamcenter_root\bin\ - 실행파일</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 8: Backup Requirements -->
+<div class="slide">
+    <h2>💾 백업 필수 폴더</h2>
+    <table>
+        <tr>
+            <th>폴더</th>
+            <th>우선순위</th>
+            <th>백업 빈도</th>
+            <th>설명</th>
+        </tr>
+        <tr>
+            <td><strong class="warning">volumes\DefaultVolume\</strong></td>
+            <td><span class="badge badge-backup">최우선</span></td>
+            <td>매일</td>
+            <td>모든 사용자 데이터 파일 저장소</td>
+        </tr>
+        <tr>
+            <td><strong class="warning">데이터베이스</strong></td>
+            <td><span class="badge badge-backup">최우선</span></td>
+            <td>매일</td>
+            <td>Oracle/SQL Server DB 백업</td>
+        </tr>
+        <tr>
+            <td><strong>tc_data\</strong></td>
+            <td><span class="badge badge-backup">필수</span></td>
+            <td>변경 시</td>
+            <td>모든 설정 및 환경변수</td>
+        </tr>
+        <tr>
+            <td><strong>bmide\templates\</strong></td>
+            <td><span class="badge badge-backup">필수</span></td>
+            <td>변경 시</td>
+            <td>커스터마이즈된 데이터모델</td>
+        </tr>
+        <tr>
+            <td><strong>portal\plugins\</strong> (커스텀)</td>
+            <td><span class="badge badge-custom">권장</span></td>
+            <td>변경 시</td>
+            <td>커스텀 플러그인</td>
+        </tr>
+        <tr>
+            <td><strong>Dispatcher\Module\</strong></td>
+            <td><span class="badge badge-custom">권장</span></td>
+            <td>변경 시</td>
+            <td>커스텀 변환 모듈</td>
+        </tr>
+        <tr>
+            <td><strong>License Server\</strong></td>
+            <td><span class="badge badge-custom">권장</span></td>
+            <td>초기 설정 후</td>
+            <td>라이선스 설정</td>
+        </tr>
+    </table>
+    
+    <div class="card" style="margin-top: 30px; border-color: #ff6b6b;">
+        <h3 style="color: #ff6b6b;">🚨 백업 팁</h3>
+        <ul>
+            <li>Volume과 DB는 <strong>동시에 백업</strong>해야 데이터 일관성 유지</li>
+            <li>백업 전 <strong>서비스 중지</strong> 권장</li>
+            <li>커스터마이징 파일은 <strong>버전관리(Git)</strong> 권장</li>
+            <li>정기 백업 자동화 스크립트 구축 필요</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Slide 9: Other Folders -->
+<div class="slide">
+    <h2>📦 기타 주요 폴더 설명</h2>
+    <div class="grid">
+        <div class="card">
+            <div class="card-title">DeploymentCenter</div>
+            <ul>
+                <li><strong>repository/</strong> - 설치 패키지 저장소
+                    <ul>
+                        <li>software/ (60,696) - 설치 소프트웨어</li>
+                        <li>dc_contributions/ - 기여 패키지</li>
+                    </ul>
+                </li>
+                <li><strong>webserver/</strong> - DC 웹서버</li>
+                <li>설치/업그레이드/패치에 사용</li>
+                <li><span class="info">설치 완료 후 software 폴더 정리 검토</span></li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title">NX2506 (NX 통합)</div>
+            <ul>
+                <li><strong>UGII/</strong> - NX 핵심 모듈</li>
+                <li><strong>UGMANAGER/</strong> - TC 통합 모듈</li>
+                <li><strong>NXBIN/</strong> - 실행 바이너리</li>
+                <li><strong>MACH/</strong> - 가공 모듈</li>
+                <li><strong>SIMULATION/</strong> - 시뮬레이션</li>
+                <li>CAD 작업 시 NX와 TC 연동</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title">apache-tomcat-9.0.98</div>
+            <ul>
+                <li>AWC (Active Workspace) 웹서버</li>
+                <li><strong>webapps/</strong> - 웹 애플리케이션</li>
+                <li><strong>conf/</strong> - 설정 파일</li>
+                <li><strong>logs/</strong> - 서버 로그 (삭제 가능)</li>
+                <li>포트 설정, SSL 등 관리</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-title">License Server</div>
+            <ul>
+                <li><strong>lmgrd.exe</strong> - 라이선스 데몬</li>
+                <li><strong>lmtools.exe</strong> - 관리 도구</li>
+                <li><strong>saltd.exe</strong> - Siemens 라이선스</li>
+                <li>라이선스 파일 관리</li>
+                <li>동시 사용자/기능 라이선스 제어</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 10: bin folder utilities -->
+<div class="slide">
+    <h2>🔧 주요 유틸리티 (bin 폴더)</h2>
+    <div class="two-col">
+        <div>
+            <h3>서버 관리</h3>
+            <ul>
+                <li><strong>tcserver.exe</strong> - TC 서버 실행</li>
+                <li><strong>install.exe</strong> - 설치 유틸리티</li>
+                <li><strong>database_verify.exe</strong> - DB 검증</li>
+                <li><strong>preferences_manager.exe</strong> - 설정 관리</li>
+                <li><strong>task_monitor.exe</strong> - 작업 모니터링</li>
+            </ul>
+            
+            <h3>데이터 관리</h3>
+            <ul>
+                <li><strong>item_export.exe</strong> - 아이템 내보내기</li>
+                <li><strong>item_import.exe</strong> - 아이템 가져오기</li>
+                <li><strong>plmxml_export.exe</strong> - PLMXML 내보내기</li>
+                <li><strong>tcxml_export.exe</strong> - TCXML 내보내기</li>
+                <li><strong>data_sync.exe</strong> - 데이터 동기화</li>
+            </ul>
+        </div>
+        <div>
+            <h3>사용자/보안</h3>
+            <ul>
+                <li><strong>make_user.exe</strong> - 사용자 생성</li>
+                <li><strong>role_util.exe</strong> - 역할 관리</li>
+                <li><strong>am_install_tree.exe</strong> - 접근권한 설치</li>
+            </ul>
+            
+            <h3>개발/디버깅</h3>
+            <ul>
+                <li><strong>bmide_*.bat</strong> - BMIDE 관련 도구들</li>
+                <li><strong>generate_client_meta_cache.exe</strong></li>
+                <li><strong>csv2tcxml.bat</strong> - CSV to TCXML 변환</li>
+            </ul>
+            
+            <h3>유지보수</h3>
+            <ul>
+                <li><strong>database_walker.exe</strong> - DB 탐색</li>
+                <li><strong>purge_*.exe</strong> - 정리 유틸리티</li>
+                <li><strong>cleanup_*.exe</strong> - 정리 도구</li>
+                <li><strong>migrate_*.exe</strong> - 마이그레이션</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Slide 11: Summary -->
+<div class="slide">
+    <h2>📋 요약 및 권장사항</h2>
+    <div class="grid">
+        <div class="card">
+            <h3 style="color: #00ff88;">✅ 핵심 체크리스트</h3>
+            <ul>
+                <li>☑️ <strong>volumes\DefaultVolume\</strong> + DB 정기 백업</li>
+                <li>☑️ <strong>tc_data\</strong> 변경 시 백업</li>
+                <li>☑️ 커스텀 코드는 Git으로 버전관리</li>
+                <li>☑️ 로그 폴더 정기 정리 (90일 이상)</li>
+                <li>☑️ temp 폴더 정기 정리</li>
+                <li>☑️ 업그레이드 전 전체 백업</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h3 style="color: #ffd93d;">📚 개발자 필수 경로</h3>
+            <ul>
+                <li>📂 <strong>bmide\</strong> - 데이터모델 개발</li>
+                <li>📂 <strong>include\, include_cpp\</strong> - ITK 개발</li>
+                <li>📂 <strong>tc_data\</strong> - 설정 커스터마이징</li>
+                <li>📂 <strong>portal\plugins\</strong> - RAC 플러그인</li>
+                <li>📂 <strong>aws2\</strong> - AWC 커스터마이징</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="card" style="margin-top: 40px;">
+        <h3>🔄 정기 유지보수 작업</h3>
+        <table>
+            <tr>
+                <th>작업</th>
+                <th>빈도</th>
+                <th>담당</th>
+            </tr>
+            <tr>
+                <td>Volume + DB 백업</td>
+                <td>매일</td>
+                <td>시스템 관리자</td>
+            </tr>
+            <tr>
+                <td>로그 정리</td>
+                <td>주간/월간</td>
+                <td>시스템 관리자</td>
+            </tr>
+            <tr>
+                <td>라이선스 모니터링</td>
+                <td>월간</td>
+                <td>라이선스 관리자</td>
+            </tr>
+            <tr>
+                <td>보안 패치 확인</td>
+                <td>분기</td>
+                <td>보안 담당자</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!-- Slide 12: End -->
+<div class="slide">
+    <h1 style="text-align: center;">감사합니다</h1>
+    <p class="subtitle" style="text-align: center;">Siemens Teamcenter 2506 폴더 구조 가이드</p>
+    <div style="text-align: center; margin-top: 60px; color: #888;">
+        <p>이 문서는 웹 브라우저에서 열거나 PDF로 인쇄하여 사용할 수 있습니다.</p>
+        <p>인쇄 시 Ctrl+P → PDF로 저장을 선택하세요.</p>
+        <p style="margin-top: 30px;">📂 경로: C:\Siemens\Teamcenter2506_Guide.html</p>
+    </div>
+</div>
+
+</body>
+</html>
