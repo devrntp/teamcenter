@@ -90,7 +90,7 @@ vm : simens 폴더 약 100기가
     8080-SOA (tc.war)
     Declartive UI Links == Siemens Web Framework (SWF)
     UI Pattern Book
-    Active Architect 는 프로토타입으로 참고용이고 실제 개발에는 안쓴다.
+    XRT Editor(Active Architect) 는 프로토타입으로 참고용이고 실제 개발에는 안쓴다.
 
     Mendix-팀센터 연계 프로젝트 많음
         Teamcenter Extention
