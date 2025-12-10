@@ -1,0 +1,293 @@
+1. Teamcenter 2506: Introduction to Active Workspace Client (AWC) Development
+
+    이 영상은 **Teamcenter Active Workspace Client (AWC) 2506 버전의 개발 환경을 처음 설정하고 기본 구조를 이해하는 과정**을 다루고 있습니다. 
+
+    사용자님의 배경(Java 백엔드, Enovia 개발)을 고려하여, AWC 개발이 기존 웹 프레임워크(React 기반)와 어떻게 연결되는지, 그리고 실제 개발 폴더 구조가 어떻게 구성되는지 중심으로 요약해 드립니다.
+
+    ### 1. AWC 개발 환경 개요 (2506 버전 기준)
+    *   **기술 스택 변화:** 과거 GWT(Google Web Toolkit)에서 현재는 **React 기반**으로 완전히 정착되었습니다. React 쪽은 안정화 단계에 있어 버전 간 큰 변화는 적은 편입니다.[1]
+    *   **개발 방식:** 커스텀 코딩보다는 주로 OOTB(Out-of-the-box) 컴포넌트를 활용하여 XML, JSON, HTML, CSS 설정을 변경하는 방식이 주를 이룹니다. 심화 개발 시에만 실제 코딩이 필요합니다.[1]
+    *   **IDE:** 영상에서는 Visual Studio Code를 사용하지만, 사용자님은 IntelliJ를 선호하시므로 해당 IDE에서 `stage` 폴더를 프로젝트로 열어 작업하셔도 무방합니다. (단, 터미널 환경 변수 설정은 필수)
+
+    ### 2. 핵심 디렉토리 구조 (TC_ROOT/aws2/stage)
+    AWC 커스터마이징의 핵심은 `TC_ROOT` 내의 `aws2/stage` 폴더입니다. 이 폴더는 개발 샌드박스 역할을 하므로, 통째로 복사해서 로컬 개발 환경을 구성할 수도 있습니다.[1]
+
+    | 폴더명 | 설명 및 용도 |
+    | :--- | :--- |
+    | **src (source)** | **가장 중요한 작업 공간.** 커스텀 모듈, 키트, OOTB 정의 파일들이 위치합니다. 이곳에서 실제 커스터마이징 작업(명령어, 테마, 워크스페이스 추가 등)이 이루어집니다. |
+    | **out** | 빌드 결과물이 생성되는 폴더입니다. 컴파일된 클라이언트 파일이 저장됩니다. |
+    | **bin** | 핵심 실행 파일들이 위치합니다. `npm` (Node Package Manager)과 각종 스크립트(빌드, 감사, 문서화 등)가 포함되어 있습니다. |
+    | **solution** | 워크스페이스 기여(contribution) 등 솔루션 관련 파일이 저장되는 곳입니다. |
+
+    ### 3. 개발 환경 초기화 및 빌드 프로세스
+    개발을 시작하기 위해서는 Windows CMD 환경에서 환경 변수 설정이 선행되어야 합니다.
+
+    1.  **초기화 (`initenv.cmd`):**
+        *   `stage` 디렉토리 내의 `initenv.cmd`를 실행하여 Teamcenter 개발에 필요한 환경 변수를 로드합니다. (일반 `npm` 명령어가 아니라 전용 환경 위에서 동작해야 함).[1]
+    2.  **주요 명령어:**
+        *   `npm run audit`: 코드 검사 수행.
+        *   `npm run build`: 전체 솔루션 빌드.
+        *   `npm run publish`: 변경 사항을 서버에 배포.
+        *   `npm run generate module`: 새로운 모듈 생성 (영상에서는 언급만 됨).
+
+    ### 요약 및 제언
+    이 영상은 'Ground Up' 시리즈의 첫 편으로, 실제 코딩보다는 **`stage` 폴더의 구조 파악과 환경 변수 설정(`initenv.cmd`)**의 중요성을 강조합니다.
+
+    **Enovia/Java 개발자 관점에서의 팁:**
+    *   Enovia의 스키마/JPO 구조와 달리, AWC는 **프론트엔드(React/Node.js) 중심의 파일 시스템 기반 개발**입니다.
+    *   Java 백엔드 로직보다는 `src` 폴더 내의 JSON/XML 설정을 통해 UI 동작을 제어하는 것이 1차적인 작업이 될 것입니다.
+    *   다음 단계로는 모듈 생성과 구체적인 커스터마이징(Command, Theme 등) 방법이 예고되어 있습니다.
+
+    [1](https://www.youtube.com/watch?v=UDdV6Mxosqg)
+
+
+
+    
+
+2. Teamcenter 2506: Create a Custom Module with Legacy 'npm run' Tools
+    이 영상은 **Teamcenter Active Workspace Client (AWC) 2506 버전**에서 기존 `npm run` 도구를 활용해 **커스텀 모듈(Module)과 키트(Kit)를 생성하고 첫 번째 명령(Command)을 추가하는 과정**을 다룹니다.
+
+    사용자님의 배경(Java/Enovia 개발, IntelliJ 사용)을 고려하여, AWC 개발의 핵심 개념인 모듈과 키트의 관계, 그리고 레거시 명령어(`npm run`)를 통한 실제 구현 단계를 요약해 드립니다.
+
+    ### 1. 핵심 개념: 키트(Kit)와 모듈(Module)
+    AWC 커스터마이징은 '모듈'과 이를 묶어주는 '키트'라는 단위로 관리됩니다. Enovia의 스키마나 JPO 패키징과 유사한 개념으로 이해하시면 됩니다.[1]
+
+    *   **모듈 (Module):** 실제 커스터마이징 내용(명령어, 테마, 워크스페이스 등)을 담는 컨테이너입니다. Java의 패키지나 Maven의 모듈과 비슷합니다.
+    *   **키트 (Kit):** 여러 모듈을 하나로 묶어 빌드 시스템에 등록하는 최상위 정의 파일(`kit.json`)입니다. 빌드 시 이 키트를 통해 어떤 모듈을 포함할지 결정합니다. 의존성 관리의 역할을 합니다.
+
+    ### 2. 커스텀 모듈 생성 프로세스 (Legacy `npm run` 방식)
+    영상에서는 4.3 버전부터 사용된 레거시 방식인 `npm run generate module`을 사용합니다. 2506 버전부터는 새로운 `aw` 명령어가 권장되지만, 레거시 방식도 여전히 동작합니다.[1]
+
+    #### 단계 1: 키트(Kit) 생성
+    가장 먼저 모듈을 담을 그릇인 키트를 생성해야 합니다.
+    1.  터미널에서 `npm run generate module` 입력.
+    2.  생성할 유형으로 `kit` 입력.
+    3.  키트 이름 입력 (예: `T7kit`). 유니크한 이름을 위해 접두어(prefix) 사용 권장.
+    4.  결과: `src` 폴더 내에 키트 폴더와 `kit.json`이 생성됨.
+
+    #### 단계 2: 모듈(Module) 생성
+    1.  다시 `npm run generate module` 실행.
+    2.  생성할 유형으로 `module` 입력.
+    3.  모듈 이름 입력 (예: `myT7module`).
+    4.  **연결할 키트 선택:** 앞서 생성한 `T7kit`를 선택하여 연결. (이 과정이 없으면 기본 OOTB 솔루션 키트에 연결되어 업그레이드 시 충돌 위험이 있음)
+    5.  결과: `src` 폴더에 모듈 폴더가 생성되고 `module.json`에 정의가 추가됨.
+
+    #### 단계 3: 커멘드(Command) 추가
+    UI에 버튼을 추가하는 예제입니다.
+    1.  `npm run generate module` 실행.
+    2.  유형으로 `command` 입력.
+    3.  명령 ID 입력 (예: `myT7command`).
+    4.  아이콘 선택 (예: `cmd12-yellow-glossy-plastic`).
+    5.  **위치(Placement) 지정:**
+        *   브라우저 개발자 도구(F12)를 열어 원하는 위치의 ID를 찾습니다 (예: `aw_navigation_bar`).
+        *   터미널에 해당 ID를 입력하여 버튼이 배치될 위치를 지정합니다.
+    6.  결과: 모듈 내에 `commandsViewModel.json` 등이 생성되며, 지정된 위치에 버튼 설정이 추가됨.
+
+    ### 3. 빌드 및 배포 (Audit, Build, Publish)
+    생성된 코드를 실제 서버에 반영하는 3단계 프로세스입니다. Java 컴파일 및 톰캣 배포 과정과 유사합니다.[1]
+
+    1.  **Audit (`npm run audit`):** 코드 문법 및 포맷 검사.
+    2.  **Build (`npm run build`):** 전체 솔루션 빌드 (약 5분 소요). `aw build` 명령어로 Audit/Build/Publish를 한 번에 수행할 수도 있습니다.
+    3.  **Publish (`npm run publish`):** 빌드된 산출물(`site.zip`)을 생성하여 파일 저장소(`file repo`)에 업로드하고 서버에 반영.
+    4.  **확인:** 브라우저 새로고침 시 추가한 아이콘이 나타나고, 클릭 시 간단한 Alert("Hello T7 command")가 뜨는지 확인.
+
+### 요약
+이 영상은 **`npm run generate module`**이라는 대화형 스크립트를 통해 코딩 없이도 **키트 → 모듈 → 커멘드** 구조를 잡는 법을 보여줍니다. Enovia 개발자에게는 **"키트 = 애플리케이션/프로젝트", "모듈 = 기능 그룹", "커멘드 = UI 메뉴/버튼"**으로 매핑하면 이해가 쉽습니다. 다음 단계로는 2506 버전의 새로운 `aw` CLI 툴을 사용한 방법과 비교가 예고되어 있습니다.
+
+[1](https://www.youtube.com/watch?v=yJ5tWSNq8kU)
+[2](https://www.youtube.com/watch?v=q47LUvpsZPQ)
+[3](https://www.plm.automation.siemens.com/ko_kr/Images/Siemens-PLM-Teamcenter-Active-Workspace-fs_tcm72-154867.pdf)
+[4](https://www.youtube.com/watch?v=X6Px378c9Zw)
+[5](https://www.youtube.com/watch?v=BA0Py0jYapo)
+[6](https://plmcoach.com/teamcenter-active-workspace-customization/)
+[7](https://www.youtube.com/watch?v=X6uLJ9LsAx4)
+[8](https://training.plm.automation.siemens.com/ilt/iltdescription.cfm?pID=TRCT2091______TCAW_3.1____5000)
+[9](https://stackoverflow.com/questions/59683288/how-to-add-insert-the-custom-actions-inside-the-existing-active-workspace-page)
+[10](https://blog.naver.com/citeksystem/222465587258)
+[11](https://www.mendix.com/ko/customer-stories/team-penske-streamlines-car-builds-with-mendix-and-teamcenter/)
+
+
+3. Teamcenter 2506: Remove Custom Module Created with Legacy 'npm run' Tools
+    이 영상은 앞서 `npm run` 레거시 방식으로 생성했던 **커스텀 모듈을 삭제하고 시스템을 원상 복구하는 과정**을 다룹니다.
+
+
+    Enovia 개발 시 커스텀 Jar 파일을 제거하고 다시 빌드/배포하는 과정과 유사하며, AWC에서 모듈화(Kit)가 잘 되어 있을 때의 이점을 보여주는 짧은 시연입니다.
+
+    ### 1. 모듈 삭제 프로세스
+    AWC의 모듈 시스템은 파일 시스템 기반으로 동작하므로 삭제 과정이 매우 직관적입니다.[1]
+
+    1.  **소스 폴더 정리:**
+        *   `TC_ROOT/aws2/stage/src` 디렉토리로 이동합니다.
+        *   이전 단계에서 생성한 커스텀 모듈(또는 키트) 폴더를 찾아 **삭제(Delete)하거나 잘라내기(Cut)** 하여 다른 곳으로 옮깁니다.
+        *   *핵심:* 별도의 'Uninstall' 명령어가 있는 것이 아니라, 소스 트리에서 폴더를 물리적으로 제거하는 방식입니다.
+
+    2.  **의존성 확인 (Validation):**
+        *   `TC_ROOT/aws2/stage/solution/kit.json` 파일을 열어 삭제한 모듈에 대한 참조가 남아있는지 확인합니다.
+        *   이전 영상처럼 **별도의 커스텀 키트(Kit)** 로 묶어서 개발했다면, 폴더 삭제만으로 참조가 깔끔하게 사라집니다. (OOTB `kit.json`을 직접 수정하지 않았기 때문)
+
+    ### 2. 빌드 및 배포 (단축 명령어 사용)
+    이번에는 `npm run audit`, `build`, `publish`를 각각 실행하지 않고, 통합 명령어인 **`aw build`**를 사용합니다.[1]
+
+    *   **`aw build`:** Audit(검사) + Build(빌드) + Publish(배포) 과정을 한 번에 수행하는 매크로 명령어입니다.
+    *   빌드가 완료되고 브라우저를 새로고침하면, 이전에 추가했던 아이콘(Command)이 사라진 것을 확인할 수 있습니다.
+
+    ### 요약 및 제언 (개발자 관점)
+    *   **모듈화의 중요성:** Enovia 개발 시 Core 파일을 건드리지 않고 별도 Schema/JPO로 격리하는 것처럼, AWC에서도 **자신만의 Kit와 Module 폴더**를 만들어 개발해야 삭제와 유지보수가 용이하다는 점을 강조합니다.
+    *   **빌드 자동화:** 개발 단계에서는 `aw build` 같은 통합 스크립트를 통해 반복적인 배포 과정을 단축할 수 있습니다.
+    *   이 영상은 레거시 방식(`npm run`)에 대한 리뷰를 마치고, 다음 영상부터 소개될 2506 버전의 새로운 **`aw` CLI 툴** 사용법을 위한 준비 단계입니다.
+
+    [1](https://www.youtube.com/watch?v=NNFrUoM3GVE)
+
+
+
+    이 영상은 앞서 `npm run` 레거시 방식으로 생성했던 **커스텀 모듈을 삭제하고 시스템을 원상 복구하는 과정**을 다룹니다.
+
+    Enovia 개발 시 커스텀 Jar 파일을 제거하고 다시 빌드/배포하는 과정과 유사하며, AWC에서 모듈화(Kit)가 잘 되어 있을 때의 이점을 보여주는 짧은 시연입니다.
+
+    ### 1. 모듈 삭제 프로세스
+    AWC의 모듈 시스템은 파일 시스템 기반으로 동작하므로 삭제 과정이 매우 직관적입니다.[1]
+
+    1.  **소스 폴더 정리:**
+        *   `TC_ROOT/aws2/stage/src` 디렉토리로 이동합니다.
+        *   이전 단계에서 생성한 커스텀 모듈(또는 키트) 폴더를 찾아 **삭제(Delete)하거나 잘라내기(Cut)** 하여 다른 곳으로 옮깁니다.
+        *   *핵심:* 별도의 'Uninstall' 명령어가 있는 것이 아니라, 소스 트리에서 폴더를 물리적으로 제거하는 방식입니다.
+
+    2.  **의존성 확인 (Validation):**
+        *   `TC_ROOT/aws2/stage/solution/kit.json` 파일을 열어 삭제한 모듈에 대한 참조가 남아있는지 확인합니다.
+        *   이전 영상처럼 **별도의 커스텀 키트(Kit)** 로 묶어서 개발했다면, 폴더 삭제만으로 참조가 깔끔하게 사라집니다. (OOTB `kit.json`을 직접 수정하지 않았기 때문)
+
+    ### 2. 빌드 및 배포 (단축 명령어 사용)
+    이번에는 `npm run audit`, `build`, `publish`를 각각 실행하지 않고, 통합 명령어인 **`aw build`**를 사용합니다.[1]
+
+    *   **`aw build`:** Audit(검사) + Build(빌드) + Publish(배포) 과정을 한 번에 수행하는 매크로 명령어입니다.
+    *   빌드가 완료되고 브라우저를 새로고침하면, 이전에 추가했던 아이콘(Command)이 사라진 것을 확인할 수 있습니다.
+
+    ### 요약 및 제언 (개발자 관점)
+    *   **모듈화의 중요성:** Enovia 개발 시 Core 파일을 건드리지 않고 별도 Schema/JPO로 격리하는 것처럼, AWC에서도 **자신만의 Kit와 Module 폴더**를 만들어 개발해야 삭제와 유지보수가 용이하다는 점을 강조합니다.
+    *   **빌드 자동화:** 개발 단계에서는 `aw build` 같은 통합 스크립트를 통해 반복적인 배포 과정을 단축할 수 있습니다.
+    *   이 영상은 레거시 방식(`npm run`)에 대한 리뷰를 마치고, 다음 영상부터 소개될 2506 버전의 새로운 **`aw` CLI 툴** 사용법을 위한 준비 단계입니다.
+
+    [1](https://www.youtube.com/watch?v=NNFrUoM3GVE)
+
+
+
+
+
+
+4. Teamcenter 2506: Explore Enhanced 'aw' Development Tools
+
+    이 영상은 **Teamcenter Active Workspace Client (AWC) 2506 버전**에서 새롭게 도입된 CLI 도구인 **`aw` 명령어**를 사용하여 커스텀 모듈을 개발하는 과정을 보여줍니다.
+
+    기존 레거시 `npm run` 방식과 비교했을 때, 새로운 `aw` 도구는 **대화형 인터페이스(Interactive Interface)**가 훨씬 강화되어 개발 편의성이 크게 향상되었습니다.
+
+    ### 1. `aw` 명령어의 특징 및 장점
+    *   **통합 및 간소화:** `audit`, `build`, `publish`, `clean` 등의 작업을 `aw <command>` 형태로 일관성 있게 제공합니다. `npm run` 스크립트를 대체합니다.[1]
+    *   **지능형 자동 완성:** 아이콘이나 배치 위치(Placement)를 선택할 때, 단순히 텍스트를 입력하는 것이 아니라 **검색 및 필터링 기능**을 제공하여 오타를 방지하고 사용성을 높였습니다.
+    *   **구조적 생성:** 모듈 생성 시 `src` 폴더 내에 `html`, `i18n`, `js`, `viewmodel` 등 필요한 하위 폴더 구조를 자동으로 잡아주어 개발 표준을 준수하기 쉽습니다.
+
+    ### 2. 개발 프로세스 (New 'aw' CLI)
+    영상에서는 다음 순서로 실제 기능을 구현합니다.
+
+    1.  **키트(Kit) 생성:**
+        *   `aw add kit` 명령어로 키트 생성 (예: `T7_kit`).
+    2.  **모듈(Module) 생성:**
+        *   `aw module` 명령어로 모듈 생성 (예: `T7_module`).
+        *   *개선점:* 레거시 방식과 달리 키트 폴더 내에 모듈을 자동으로 올바르게 구성해 줍니다.
+    3.  **커멘드(Command) 추가:**
+        *   `aw add command` 명령 실행.
+        *   **아이콘 선택:** `gls` 등을 입력하여 필터링 후 화살표 키로 'yellow glossy plastic' 선택.
+        *   **타이틀 입력:** "Custom Command" 등 화면에 표시될 이름 입력.
+        *   **유형 선택:** Simple, Toggle, Group 등 다양한 유형 중 선택 가능 (영상에서는 `Simple` → `Popup` 선택).
+        *   **위치(Placement) 지정:** 'Global'을 입력하여 검색된 목록 중 `global navigation bar`를 화살표 키로 선택.
+        *   *결과:* `commandsViewModel.json` 뿐만 아니라 팝업 UI를 위한 `html` 파일까지 자동으로 스캐폴딩(Scaffolding) 해줍니다.
+
+    ### 3. 빌드 및 결과 확인
+    *   **빌드:** `aw build` 명령어로 전체 빌드 수행. (Audit → Build → Publish 자동 수행)
+    *   **확인:** 브라우저 새로고침 후, 우측 상단 네비게이션 바에 아이콘이 추가된 것을 확인. 클릭 시 빈 팝업 패널이 뜨는 것까지 확인 (닫기 기능 등 로직은 추후 구현 필요).
+
+    ### 요약
+    Java 개발자 관점에서 보자면, `npm run` 방식이 단순히 텍스트 파일을 생성해주는 수준이었다면, **`aw` 툴은 Spring Initializr나 IntelliJ의 프로젝트 생성 마법사**처럼 의존성과 디렉토리 구조, 초기 코드를 체계적으로 만들어주는 도구로 발전했습니다. 향후 AWC 개발 시에는 이 **`aw` 툴 사용이 표준**이 될 것입니다.
+
+    [1](https://www.youtube.com/watch?v=SLTDp2H9JVQ)
+
+
+
+
+5. Teamcenter 2506: Remove a Custom Module built with 'aw' Commands
+    이 영상은 앞서 새로운 **`aw` 명령어(CLI)**를 사용하여 생성했던 커스텀 모듈을 삭제하는 과정을 다룹니다.
+
+    결론적으로, **생성 도구(`npm` vs `aw`)와 관계없이 삭제 프로세스는 파일 시스템 기반으로 동일**하다는 점을 확인할 수 있습니다.
+
+    ### 1. 모듈 삭제 절차 (File System Level)
+    AWC의 모듈 시스템은 물리적인 폴더 구조에 의존하므로, 삭제 역시 폴더를 제거하는 것으로 시작합니다.[1]
+
+    1.  **소스 정리:**
+        *   `src` 디렉토리 내의 커스텀 키트 폴더(예: `T7 kit`)를 찾아 **삭제**합니다.
+    2.  **의존성 검증 (Cross-check):**
+        *   `solution/kit.json` 파일을 열어 삭제한 모듈에 대한 잔여 참조가 없는지 확인합니다.
+        *   *개발자 팁:* 모듈 생성 시 의존성을 제대로 관리했다면 폴더 삭제만으로 깔끔하게 정리되지만, 혹시 모를 빌드 에러를 방지하기 위해 이 파일을 체크하는 습관이 중요합니다.
+
+    ### 2. 빌드 및 배포
+    변경 사항(삭제)을 시스템에 반영하기 위해 다시 빌드를 수행합니다.
+
+    *   **명령어 실행:** 영상에서는 `aw build` (transcript상 `AWU`로 표기되었으나 문맥상 전체 빌드 명령)를 실행하여 **Audit → Build → Publish** 과정을 수행합니다.[1]
+    *   **결과 확인:** 빌드 완료 후 브라우저를 새로고침하면, 해당 모듈로 인해 생성되었던 UI 요소(커스텀 팝업 버튼)가 사라진 것을 확인할 수 있습니다.
+
+    ### 요약
+    이 과정은 다음 단계의 심화 예제(Use Cases)를 실습하기 위해 개발 환경을 **'Clean State(초기 상태)'**로 되돌리는 작업입니다. Enovia 개발 시 테스트용 JPO나 스키마를 제거하고 다시 컴파일/배포하여 깨끗한 환경을 만드는 과정과 정확히 일치합니다.
+
+    [1](https://www.youtube.com/watch?v=aSOu_oFUxag)
+
+
+
+
+6. Teamcenter 2506: Make Code Changes Efficiently using the Development Server
+    이 영상은 AWC 개발 생산성을 획기적으로 높여주는 **Dev Server(개발 서버)의 설정과 활용법**을 다룹니다.
+
+    Enovia 개발 시 Tomcat 재시작 없이 JSP나 XML 변경 사항을 바로 확인하는 'Hot Reload' 기능과 유사한 개념입니다. 매번 5~10분씩 걸리는 전체 빌드(`audit`→`build`→`publish`) 과정을 단축시켜 줍니다.
+
+    ### 1. Dev Server 개요 및 장점
+    *   **역할:** 기존 운영 중인 AWC 인터페이스(포트 3000)와 별도로, 개발자 전용의 대체 인터페이스(포트 3001 등)를 띄웁니다.[1]
+    *   **핵심 기능:**
+        *   **Hot Reload:** 파일(XML, JSON, JS 등)을 수정하고 저장(Save)하면, 서버가 변경 사항(Delta)만 감지하여 **즉시 반영**합니다 (약 1분 이내).
+        *   **안전한 격리:** 운영 환경이나 다른 사용자에게 영향을 주지 않고 로컬에서 마음껏 테스트할 수 있습니다.
+    *   **주의사항:** 파일의 내용을 수정하는 건 바로 반영되지만, 새로운 파일/폴더를 추가하거나 삭제하는 경우에는 Dev Server를 재시작해야 인식합니다.[1]
+
+    ### 2. Dev Server 실행 및 사용법 (명령어)
+    `aws2/stage` 디렉토리에서 다음 과정을 수행합니다.
+
+    1.  **초기화:** `initenv` (환경 변수 로드).
+    2.  **서버 시작:** **`aw start`** (이전 버전의 `npm run start`에 해당).
+        *   실행 시 터미널이 "Watching" 상태가 되며 로그가 출력됩니다. 이 터미널 창은 닫지 말고 유지해야 합니다.
+        *   브라우저에서 `http://localhost:3001` (또는 지정된 포트)로 접속하여 개발용 UI를 확인합니다.
+
+    ### 3. 개발 워크플로우 비교
+    | 구분 | 기존 방식 (Full Build) | Dev Server 방식 (Hot Reload) |
+    | :--- | :--- | :--- |
+    | **명령어** | `aw build` (Audit+Build+Publish) | `aw start` (최초 1회) → 코드 수정/저장 |
+    | **소요 시간** | 매번 5~10분 | 최초 구동 후 **수초~1분 내** 반영 |
+    | **적합한 작업** | 최종 배포, 모듈 추가/삭제 | UI 수정, 로직 변경, 레이아웃 조정 |
+    | **반영 확인** | 브라우저 새로고침 (포트 3000) | 브라우저 자동/수동 갱신 (포트 3001) |
+
+    ### 시연 시나리오 (영상 내용)
+    1.  **초기 상태:** 커스텀 모듈이 없는 깨끗한 상태에서 `aw start`로 서버를 띄움.
+    2.  **모듈 추가:** 별도 터미널을 열어 `aw kit`, `aw module`, `aw command`로 새 기능을 추가함.
+        *   *확인:* 파일이 새로 생겼으므로 Dev Server가 즉시 인식하지 못함.
+    3.  **재시작:** `Ctrl+C`로 서버 중지 후 다시 `aw start`. 이제 버튼이 보임.
+    4.  **실시간 수정:** 소스 코드에서 버튼 제목을 "Training Command" → "New"로 변경하고 **저장(Save)**.
+        *   *확인:* 터미널에서 "Change detected" 로그가 뜨고, 브라우저 새로고침 시 제목이 바로 바뀜.
+
+    ### 요약
+    Java/Enovia 백엔드 개발에 비유하자면, `aw build`는 전체 WAR를 다시 말아 배포하는 것이고, `aw start`는 **JRebel**이나 **Debug Mode**를 켜두고 클래스/리소스만 교체하는 것과 같습니다. **UI 개발 효율을 위해 필수적인 기능**입니다.
+
+    [1](https://www.youtube.com/watch?v=sUW_k0emyvc)
+    [2](https://teamcenter.tistory.com/22)
+    [3](https://community.sw.siemens.com/s/question/0D54O000061xufVSAQ/how-to-setup-active-workspace-41-development-environment)
+    [4](https://www.altium.com/kr/documentation/altium-365/additional-installation-setup-siemens-teamcenter-plm)
+    [5](https://blog.redbeansoft.com/posts/wony/tc-deploymentcenter-install/)
+    [6](https://globalplm.com/active-workspace-installation/)
+    [7](https://learn.microsoft.com/ko-kr/azure/architecture/example-scenario/manufacturing/teamcenter-baseline)
+    [8](https://www.youtube.com/watch?v=BA0Py0jYapo)
+    [9](https://blog.naver.com/citeksystem/222465587258)
+    [10](https://www.plm.automation.siemens.com/ko_kr/Images/Siemens-PLM-Teamcenter-Active-Workspace-fs_tcm72-154867.pdf)
+
