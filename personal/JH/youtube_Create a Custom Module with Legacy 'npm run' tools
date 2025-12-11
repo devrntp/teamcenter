@@ -28,7 +28,7 @@
         *   `npm run audit`: 코드 검사 수행.
         *   `npm run build`: 전체 솔루션 빌드.
         *   `npm run publish`: 변경 사항을 서버에 배포.
-        *   `npm run generate module`: 새로운 모듈 생성 (영상에서는 언급만 됨).
+        *   `npm run generateModule`: 새로운 모듈 생성 (영상에서는 언급만 됨).
 
     ### 요약 및 제언
     이 영상은 'Ground Up' 시리즈의 첫 편으로, 실제 코딩보다는 **`stage` 폴더의 구조 파악과 환경 변수 설정(`initenv.cmd`)**의 중요성을 강조합니다.
@@ -60,13 +60,13 @@
 
     #### 단계 1: 키트(Kit) 생성
     가장 먼저 모듈을 담을 그릇인 키트를 생성해야 합니다.
-    1.  터미널에서 `npm run generate module` 입력.
+    1.  터미널에서 `npm run generateModule` 입력.
     2.  생성할 유형으로 `kit` 입력.
     3.  키트 이름 입력 (예: `T7kit`). 유니크한 이름을 위해 접두어(prefix) 사용 권장.
     4.  결과: `src` 폴더 내에 키트 폴더와 `kit.json`이 생성됨.
 
     #### 단계 2: 모듈(Module) 생성
-    1.  다시 `npm run generate module` 실행.
+    1.  다시 `npm run generateModule` 실행.
     2.  생성할 유형으로 `module` 입력.
     3.  모듈 이름 입력 (예: `myT7module`).
     4.  **연결할 키트 선택:** 앞서 생성한 `T7kit`를 선택하여 연결. (이 과정이 없으면 기본 OOTB 솔루션 키트에 연결되어 업그레이드 시 충돌 위험이 있음)
@@ -74,12 +74,12 @@
 
     #### 단계 3: 커멘드(Command) 추가
     UI에 버튼을 추가하는 예제입니다.
-    1.  `npm run generate module` 실행.
+    1.  `npm run generateModule` 실행.
     2.  유형으로 `command` 입력.
     3.  명령 ID 입력 (예: `myT7command`).
     4.  아이콘 선택 (예: `cmd12-yellow-glossy-plastic`).
     5.  **위치(Placement) 지정:**
-        *   브라우저 개발자 도구(F12)를 열어 원하는 위치의 ID를 찾습니다 (예: `aw_navigation_bar`).
+        *   브라우저 개발자 도구(F12)를 열어 원하는 위치의 ID를 찾습니다 (예: `aw_globalNavigationbar`).
         *   터미널에 해당 ID를 입력하여 버튼이 배치될 위치를 지정합니다.
     6.  결과: 모듈 내에 `commandsViewModel.json` 등이 생성되며, 지정된 위치에 버튼 설정이 추가됨.
 
