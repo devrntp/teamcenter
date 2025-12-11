@@ -27,27 +27,31 @@ initenv.cmd
 npm install
 ```
 
-### Step 2: TC 서버 연결 설정 (터미널 열때마다 실행)
+### Step 2: TC 서버 연결 설정
 
 **방법 1: 환경 변수 사용 (권장)**
 
 ```bash
 # Windows CMD
 set AW_PROXY_SERVER=http://192.168.0.225:3000
-
-```파워쉘
 $env:AW_PROXY_SERVER = "http://192.168.0.225:3000"
-$env:ENDPOINT_GATEWAY="http://192.168.0.225:3000"
 
 # 또는 Gateway 직접 지정
-set ENDPOINT_GATEWAY=http://tc-server-hostname:3000/aw
+set ENDPOINT_GATEWAY=http://192.168.0.225:3000
+$env:ENDPOINT_GATEWAY = "http://192.168.0.225:3000"
 ```
 
-**방법 2: 포트 변경 (선택)** (터미널 열때마다 실행)
+**방법 2: 포트 변경 (선택)**
 
 ```bash
 set PORT=4000
-$env:PORT=4000
+$env:PORT = "4000"
+
+(풀셋)
+$env:AW_PROXY_SERVER = "http://192.168.0.225:3000"
+$env:ENDPOINT_GATEWAY = "http://192.168.0.225:3000"
+$env:PORT = "4000"
+npm run start
 ```
 
 ### Step 3: 개발 서버 실행
@@ -58,8 +62,8 @@ npm run start
 
 성공 시 출력:
 ```
-setupProxy: Routing non-file communication to 192.168.0.225:3000
-setupProxy: devServer running on 192.168.0.225:4000
+setupProxy: Routing non-file communication to http://tc-server:7001/aw
+setupProxy: devServer running on http://localhost:3000
 ```
 
 ### Step 4: 브라우저 접속
@@ -89,7 +93,7 @@ http://localhost:4000
 
 ### 디버그 모드
 ```
-http://localhost:3000?debug=true
+http://localhost:4000?debug=true
 ```
 
 ### VS Code 디버깅
