@@ -1,6 +1,8 @@
 --solr 공부 in teamcenter
 
-
+C:\Siemens\Teamcenter2506\teamcenter_root\solr-9.6
+TcSchemaToSolrSchemaTransform.bat >> 팀센터 데이터 스마카와 연동됨
+runSolr.bat >> 검색 서비스 제어
 
 
 
