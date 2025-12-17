@@ -3,6 +3,11 @@
 C:\Siemens\Teamcenter2506\teamcenter_root\solr-9.6
 TcSchemaToSolrSchemaTransform.bat >> 팀센터 데이터 스마카와 연동됨
 runSolr.bat >> 검색 서비스 제어
+솔라는 스탠드얼론 모드로 가동된다. 계정 solr_admin / infodba
+팀센터는 TcFTSIndexer 가 데이터를 수집하고, Solr로 인덱싱한다.
+Geolus 로 모양검색도 일부 한다(모양이나 크기가 비슷한 객체를 검색)
 
+--solr 설치 기본
+1.solr 설치. zip 받아서 압축해제하면 끝
 
 
